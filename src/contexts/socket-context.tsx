@@ -27,6 +27,7 @@ interface SocketContextType {
   erro: string;
   entrarSala: (codigo: string, nome: string, isHost?: boolean) => void;
   iniciarJogo: (codigo: string) => void;
+  reiniciarJogo: (codigo: string) => void;
   revelarCarta: (codigo: string) => void;
   sairSala: (codigo: string) => void;
   limparErro: () => void;
@@ -111,6 +112,17 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       }
     });
 
+    socketIO.on("jogo-reiniciado", (salaAtualizada) => {
+      console.log("🔄 Jogo reiniciado!");
+      setSala(salaAtualizada);
+      const jogador = salaAtualizada.jogadores.find(
+        (j) => j.socketId === socketIO.id
+      );
+      if (jogador) {
+        setJogadorAtual(jogador);
+      }
+    });
+
     socketIO.on("carta-revelada", (jogadorId) => {
       console.log("🃏 Carta revelada por jogador:", jogadorId);
     });
@@ -161,6 +173,17 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     [socket, conectado]
   );
 
+  const reiniciarJogo = useCallback(
+    (codigo: string) => {
+      if (socket && conectado) {
+        console.log(`🎯 Reiniciando jogo na sala: ${codigo}`);
+        setErro("");
+        socket.emit("reiniciar-jogo", codigo);
+      }
+    },
+    [socket, conectado]
+  );
+
   const revelarCarta = useCallback(
     (codigo: string) => {
       if (socket && conectado) {
@@ -196,6 +219,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     erro,
     entrarSala,
     iniciarJogo,
+    reiniciarJogo,
     revelarCarta,
     sairSala,
     limparErro,

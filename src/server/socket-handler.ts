@@ -129,6 +129,23 @@ export default function SocketHandler(
       );
     });
 
+    socket.on("reiniciar-jogo", (codigo) => {
+      console.log(`Tentativa de reiniciar jogo na sala ${codigo}`);
+
+      const sala = GameLogic.reiniciarJogo(codigo, socket.id);
+
+      if (!sala) {
+        socket.emit(
+          "erro",
+          "Não foi possível reiniciar o jogo. Verifique se você é o host e se há jogadores suficientes."
+        );
+        return;
+      }
+
+      io.to(codigo).emit("jogo-reiniciado", sala);
+      io.to(codigo).emit("sala-atualizada", sala);
+    });
+
     // Evento: Revelar carta
     socket.on("revelar-carta", (codigo) => {
       const { sala, jogador } = GameLogic.revelarCarta(codigo, socket.id);

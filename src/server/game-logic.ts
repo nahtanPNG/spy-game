@@ -159,6 +159,48 @@ export class GameLogic {
     return sala;
   }
 
+  static reiniciarJogo(codigo: string, hostSocketId: string): Sala | null {
+    const sala = salas.get(codigo);
+    if (!sala) return null;
+
+    const host = sala.jogadores.find(
+      (j) => j.socketId === hostSocketId && j.isHost
+    );
+    if (!host) return null;
+
+    sala.status = "aguardando";
+    sala.jogadores = sala.jogadores.map((jogador) => ({
+      ...jogador,
+      carta: "",
+      cartaRevelada: false,
+    }));
+
+    sala.local = "";
+    sala.espiao = "";
+
+    const localEscolhido =
+      GAME_LOCATIONS[Math.floor(Math.random() * GAME_LOCATIONS.length)];
+
+    // Escolhe um espião aleatório
+    const espiaoIndex = Math.floor(Math.random() * sala.jogadores.length);
+    const espiaoEscolhido = sala.jogadores[espiaoIndex];
+
+    // Distribui as cartas
+    sala.jogadores = sala.jogadores.map((jogador, index) => ({
+      ...jogador,
+      carta: index === espiaoIndex ? "espiao" : localEscolhido,
+      cartaRevelada: false,
+    }));
+
+    // Atualiza o estado da sala
+    sala.local = localEscolhido;
+    sala.espiao = espiaoEscolhido.id;
+    sala.status = "em-jogo";
+
+    salas.set(codigo, sala);
+    return sala;
+  }
+
   static revelarCarta(
     codigo: string,
     socketId: string

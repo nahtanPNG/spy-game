@@ -25,6 +25,7 @@ export interface ClientToServerEvents {
     isHost: boolean;
   }) => void;
   "iniciar-jogo": (codigo: string) => void;
+  "reiniciar-jogo": (codigo: string) => void;
   "revelar-carta": (codigo: string) => void;
   "sair-sala": (codigo: string) => void;
 }
@@ -35,6 +36,7 @@ export interface ServerToClientEvents {
   "jogador-entrou": (jogador: Jogador) => void;
   "jogador-saiu": (jogadorId: string) => void;
   "jogo-iniciado": (sala: Sala) => void;
+  "jogo-reiniciado": (sala: Sala) => void;
   "carta-revelada": (jogadorId: string) => void;
   erro: (mensagem: string) => void;
   "sala-nao-encontrada": () => void;

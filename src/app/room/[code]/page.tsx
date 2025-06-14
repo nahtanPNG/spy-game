@@ -25,6 +25,7 @@ export default function SalaPage() {
     erro,
     entrarSala,
     iniciarJogo,
+    reiniciarJogo,
     revelarCarta,
     sairSala,
     limparErro,
@@ -81,6 +82,20 @@ export default function SalaPage() {
 
     setCarregando(true);
     iniciarJogo(codigoSala);
+
+    // Remove o carregando após um tempo (vai ser atualizado pelo WebSocket)
+    setTimeout(() => setCarregando(false), 2000);
+  };
+
+  const handleReiniciarJogo = () => {
+    if (!sala || sala.jogadores.length < 3) {
+      alert("Mínimo de 3 jogadores para reiniciar!");
+      return;
+    }
+
+    setCarregando(true);
+    reiniciarJogo(codigoSala);
+    setMostrarCarta(false);
 
     // Remove o carregando após um tempo (vai ser atualizado pelo WebSocket)
     setTimeout(() => setCarregando(false), 2000);
@@ -194,7 +209,7 @@ export default function SalaPage() {
                 ))}
               </div>
 
-              {/* Botão Iniciar Jogo - só para host */}
+              {/* Botão Iniciar Jogo e Reiniciar - só para host */}
               {sala.status === "aguardando" && jogadorAtual?.isHost && (
                 <div className="mt-6">
                   <button
@@ -205,6 +220,24 @@ export default function SalaPage() {
                     {carregando
                       ? "Iniciando..."
                       : `Iniciar Jogo (${sala.jogadores.length}/15)`}
+                  </button>
+                  {sala.jogadores.length < 3 && (
+                    <p className="text-gray-500 text-sm mt-2 text-center">
+                      Mínimo de 3 jogadores necessário
+                    </p>
+                  )}
+                </div>
+              )}
+              {sala.status === "em-jogo" && jogadorAtual?.isHost && (
+                <div className="mt-6">
+                  <button
+                    onClick={handleReiniciarJogo}
+                    disabled={sala.jogadores.length < 3 || carregando}
+                    className="w-full py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {carregando
+                      ? "Reiniciando..."
+                      : `Reiniciar Jogo (${sala.jogadores.length}/15)`}
                   </button>
                   {sala.jogadores.length < 3 && (
                     <p className="text-gray-500 text-sm mt-2 text-center">
