@@ -10,7 +10,7 @@ import {
 import { GameLogic } from "./game-logic";
 
 export type NextApiResponseServerIO = NextApiResponse & {
-  socket: any & {
+  socket: {
     server: NetServer & {
       io: ServerIO<
         ClientToServerEvents,
@@ -177,7 +177,15 @@ export default function SocketHandler(
     });
 
     // Função auxiliar para lidar com saída da sala
-    function handleLeaveRoom(socket: any, codigo: string) {
+    function handleLeaveRoom(
+      socket: import("socket.io").Socket<
+        ClientToServerEvents,
+        ServerToClientEvents,
+        InterServerEvents,
+        SocketData
+      >,
+      codigo: string
+    ) {
       const { sala, jogadorRemovido } = GameLogic.sairSala(codigo, socket.id);
 
       socket.leave(codigo);
