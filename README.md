@@ -129,7 +129,7 @@ O jogo inclui uma variedade de locais interessantes:
 
 ## 🐛 Reportar Bugs
 
-Se você encontrar algum bug, por favor abra uma [issue](https://github.com/seu-usuario/spy-game/issues) descrevendo:
+Se você encontrar algum bug, por favor abra uma [issue](https://github.com/nahtanpng/spy-game/issues) descrevendo:
 - O que aconteceu
 - O que você esperava que acontecesse
 - Passos para reproduzir o bug
