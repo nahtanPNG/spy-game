@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🕵️ Jogo do Espião
 
-## Getting Started
+Um jogo multiplayer onde um jogador é o espião e deve descobrir o local secreto através de perguntas estratégicas, enquanto os outros jogadores tentam identificar quem é o espião. 
 
-First, run the development server:
+**🏠 Jogo Presencial**: Este sistema foi projetado especificamente para reuniões presenciais, servindo apenas como uma ferramenta digital para distribuição e visualização das cartas. A interação, perguntas e discussões acontecem pessoalmente entre os jogadores.
 
+## 🎯 Como Funciona
+
+### Para os Jogadores Normais
+- Recebem uma carta com um **local específico**
+- Fazem perguntas para descobrir quem é o espião
+- Devem dar respostas que demonstrem conhecimento do local sem serem óbvios demais
+
+### Para o Espião
+- Recebe uma carta indicando que é o **ESPIÃO**
+- Não sabe qual é o local
+- Deve descobrir o local através das perguntas e respostas dos outros jogadores
+- Tenta se passar por um jogador normal
+
+## 🚀 Funcionalidades
+
+- **Sistema de Salas**: Jogadores entram usando códigos únicos de sala
+- **Distribuição Digital de Cartas**: Cada jogador visualiza sua carta no próprio dispositivo
+- **Conexão em Tempo Real**: WebSocket para sincronização da distribuição das cartas
+- **Locais Aleatórios**: Sistema de geração aleatória de locais para cada partida
+- **Interface Responsiva**: Funciona em desktop e mobile
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Next.js 15** - Framework React com App Router
+- **WebSocket** - Comunicação em tempo real
+- **TypeScript** - Tipagem estática
+- **Tailwind CSS** - Estilização
+- **Socket.io** - Gerenciamento de WebSocket
+
+## 📋 Pré-requisitos
+
+- Node.js 18.0 ou superior
+- npm ou yarn
+- Navegador moderno com suporte a WebSocket
+
+## 🔧 Instalação
+
+1. Clone o repositório:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/seu-usuario/spy-game.git
+cd spy-game
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instale as dependências:
+```bash
+npm install
+# ou
+yarn install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Execute o projeto em modo de desenvolvimento:
+```bash
+npm run dev
+# ou
+yarn dev
+```
 
-## Learn More
+5. Acesse `http://localhost:3000` no seu navegador
+   
+6. Configure o [Backend](https://github.com/nahtanPNG/spy-game-backend)
 
-To learn more about Next.js, take a look at the following resources:
+## 🎮 Como Jogar
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Criar/Entrar em uma Sala**
+   - Um jogador cria uma sala e compartilha o código
+   - Outros jogadores entram usando o código da sala
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Visualizar a Carta**
+   - Cada jogador clica no botão "Ver Carta" no seu dispositivo
+   - A carta mostra o local OU indica que você é o espião
+   - **Mantenha sua carta em segredo!**
 
-## Deploy on Vercel
+3. **Rodada de Perguntas (Presencial)**
+   - Jogadores fazem perguntas estratégicas **verbalmente**
+   - Respostas devem ser dadas **oralmente** sem revelar muito
+   - Use o aplicativo apenas para consultar sua carta quando necessário
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Descobrir o Espião (Presencial)**
+   - Após as perguntas, jogadores **discutem pessoalmente** e votam
+   - O espião vence se descobrir o local correto
+   - Todas as discussões e votações acontecem na mesa, não no app
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌟 Funcionalidades Planejadas
+
+- [ ] Sistema de pontuação local
+- [ ] Timer para rodadas
+- [ ] Histórico de partidas
+- [ ] Diferentes pacotes de locais
+- [ ] Modo de configuração personalizada
+- [ ] Tela de administrador da sala
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 🎯 Locais Disponíveis
+
+O jogo inclui uma variedade de locais interessantes:
+- Aeroporto
+- Banco
+- Praia
+- Escola
+- Hospital
+- Biblioteca
+- Restaurante
+- Cinema
+- Parque
+- Shopping
+- E muito mais...
+
+## 🐛 Reportar Bugs
+
+Se você encontrar algum bug, por favor abra uma [issue](https://github.com/seu-usuario/spy-game/issues) descrevendo:
+- O que aconteceu
+- O que você esperava que acontecesse
+- Passos para reproduzir o bug
+- Screenshots (se aplicável)
+
+---
+
+**Feito com ❤️ by [nahtanPNG](https://github.com/nahtanPNG)**
+
+*Give this project a ⭐ if you found it helpful!*
