@@ -75,13 +75,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-2xl p-8 w-full max-w-md shadow-2xl border border-gray-800">
-        {/* Header */}
+      <div className="bg-zinc-900 rounded-2xl p-8 w-full max-w-md shadow-2xl border border-zinc-800">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Espião</h1>
           <p className="text-gray-400">Descubra quem é o espião</p>
 
-          {/* Status de conexão */}
           <div className="mt-4">
             <div
               className={`inline-flex items-center px-3 py-1 rounded-full text-xs ${
@@ -100,14 +98,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mostrar erros */}
         {erro && (
           <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg">
             <p className="text-red-300 text-sm">{erro}</p>
           </div>
         )}
 
-        {/* Input Nome */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Seu nome
@@ -117,12 +113,11 @@ export default function Home() {
             value={nomeJogador}
             onChange={(e) => setNomeJogador(e.target.value)}
             placeholder="Digite seu nome"
-            className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all"
+            className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all"
             maxLength={20}
           />
         </div>
 
-        {/* Botões principais */}
         {!modo && (
           <div className="space-y-4">
             <button
@@ -134,14 +129,13 @@ export default function Home() {
 
             <button
               onClick={() => setModo("entrar")}
-              className="w-full py-4 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 border border-gray-700 transition-all"
+              className="w-full py-4 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-gray-700 border border-zinc-700 transition-all"
             >
               Entrar em Sala
             </button>
           </div>
         )}
 
-        {/* Criar sala */}
         {modo === "criar" && (
           <div className="space-y-4">
             <div className="text-center">
@@ -165,7 +159,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Entrar em sala */}
         {modo === "entrar" && (
           <div className="space-y-4">
             <div>
@@ -177,7 +170,7 @@ export default function Home() {
                 value={codigoSala}
                 onChange={(e) => setCodigoSala(e.target.value.toUpperCase())}
                 placeholder="Ex: ABC123"
-                className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all uppercase"
+                className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all uppercase"
                 maxLength={6}
               />
             </div>
@@ -204,7 +197,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Footer */}
         <div className="mt-8 text-center text-gray-500 text-sm">
           <p>3-15 jogadores</p>
         </div>

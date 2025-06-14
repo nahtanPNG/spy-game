@@ -100,7 +100,7 @@ export default function SalaPage() {
     <div className="min-h-screen bg-black p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-gray-900 rounded-2xl p-6 mb-6 shadow-xl border border-gray-800">
+        <div className="bg-zinc-900 rounded-2xl p-6 mb-6 shadow-xl border border-zinc-800">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">
@@ -135,7 +135,7 @@ export default function SalaPage() {
             </div>
             <button
               onClick={handleVoltarHome}
-              className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-all"
+              className="px-4 py-2 bg-zinc-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-all"
             >
               Sair
             </button>
@@ -165,7 +165,7 @@ export default function SalaPage() {
         {sala && (
           <div className="grid md:grid-cols-2 gap-6">
             {/* Coluna Esquerda - Jogadores */}
-            <div className="bg-gray-900 rounded-2xl p-6 shadow-xl border border-gray-800">
+            <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
               <h2 className="text-xl font-bold text-white mb-4">Jogadores</h2>
 
               <div className="space-y-3">
@@ -175,7 +175,7 @@ export default function SalaPage() {
                     className={`p-4 rounded-lg border transition-all ${
                       jogador.id === jogadorAtual?.id
                         ? "bg-white text-black border-gray-300"
-                        : "bg-gray-800 border-gray-700 text-gray-300"
+                        : "bg-zinc-800 border-zinc-700 text-gray-300"
                     }`}
                   >
                     <div className="flex justify-between items-center">
@@ -218,7 +218,7 @@ export default function SalaPage() {
             {/* Coluna Direita - Jogo */}
             <div className="space-y-6">
               {/* Sua Carta */}
-              <div className="bg-gray-900 rounded-2xl p-6 shadow-xl border border-gray-800">
+              <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
                 <h2 className="text-xl font-bold text-white mb-4">Sua Carta</h2>
 
                 {sala.status === "aguardando" && (
@@ -232,7 +232,7 @@ export default function SalaPage() {
                 {sala.status === "em-jogo" && !mostrarCarta && (
                   <div className="text-center py-8">
                     <div className="mb-4">
-                      <div className="w-32 h-48 mx-auto bg-gray-800 rounded-lg flex items-center justify-center shadow-xl border border-gray-700 hover:bg-gray-700 transition-all cursor-pointer">
+                      <div className="w-32 h-48 mx-auto bg-zinc-800 rounded-lg flex items-center justify-center shadow-xl border border-zinc-700 hover:bg-gray-700 transition-all cursor-pointer">
                         <span className="text-4xl text-gray-400">?</span>
                       </div>
                     </div>
@@ -251,8 +251,8 @@ export default function SalaPage() {
                       <div
                         className={`w-32 h-48 mx-auto rounded-lg flex items-center justify-center shadow-xl border ${
                           jogadorAtual.carta === "espiao"
-                            ? "bg-gray-800 border-red-500"
-                            : "bg-gray-800 border-green-500"
+                            ? "bg-zinc-800 border-red-500"
+                            : "bg-zinc-800 border-green-500"
                         }`}
                       >
                         <div className="text-center text-white">
@@ -288,14 +288,14 @@ export default function SalaPage() {
 
               {/* Lista de Locais */}
               {sala.status === "em-jogo" && (
-                <div className="bg-gray-900 rounded-2xl p-6 shadow-xl border border-gray-800">
+                <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-bold text-white">
                       Locais Possíveis
                     </h2>
                     <button
                       onClick={() => setMostrarLocais(!mostrarLocais)}
-                      className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-all"
+                      className="px-4 py-2 bg-zinc-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-all"
                     >
                       {mostrarLocais ? "Ocultar" : "Mostrar"}
                     </button>
@@ -310,7 +310,7 @@ export default function SalaPage() {
                             local === sala.local &&
                             jogadorAtual?.carta !== "espiao"
                               ? "bg-green-900/50 text-green-300 border border-green-800"
-                              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                              : "bg-zinc-800 text-gray-300 hover:bg-gray-700"
                           }`}
                         >
                           {local}
