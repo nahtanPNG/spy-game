@@ -1,22 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/contexts/socket-context";
 
 export default function Home() {
   const [nomeJogador, setNomeJogador] = useState("");
   const [codigoSala, setCodigoSala] = useState("");
   const [modo, setModo] = useState<"criar" | "entrar" | null>(null);
+  const [carregando, setCarregando] = useState(false);
   const router = useRouter();
+  const { conectado, erro, entrarSala, limparErro } = useSocket();
 
-  const criarSala = () => {
+  // Limpa erro quando troca de modo
+  useEffect(() => {
+    if (erro) {
+      limparErro();
+    }
+  }, [modo, erro, limparErro]);
+
+  const criarSala = async () => {
     if (!nomeJogador.trim()) {
       alert("Digite seu nome!");
       return;
     }
 
+    if (!conectado) {
+      alert("Conectando ao servidor... Tente novamente em um momento.");
+      return;
+    }
+
+    setCarregando(true);
+
     // Gera código aleatório de 6 caracteres
     const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    // Entra na sala como host
+    entrarSala(codigo, nomeJogador, true);
 
     // Redireciona para a sala
     router.push(
@@ -24,7 +44,7 @@ export default function Home() {
     );
   };
 
-  const entrarSala = () => {
+  const entrarNaSala = async () => {
     if (!nomeJogador.trim()) {
       alert("Digite seu nome!");
       return;
@@ -35,6 +55,17 @@ export default function Home() {
       return;
     }
 
+    if (!conectado) {
+      alert("Conectando ao servidor... Tente novamente em um momento.");
+      return;
+    }
+
+    setCarregando(true);
+
+    // Entra na sala como jogador normal
+    entrarSala(codigoSala.toUpperCase(), nomeJogador, false);
+
+    // Redireciona para a sala
     router.push(
       `/room/${codigoSala.toUpperCase()}?nome=${encodeURIComponent(
         nomeJogador
@@ -44,12 +75,37 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="bg-zinc-900 rounded-2xl p-8 w-full max-w-md shadow-2xl border border-zinc-800">
+      <div className="bg-gray-900 rounded-2xl p-8 w-full max-w-md shadow-2xl border border-gray-800">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Espião</h1>
           <p className="text-gray-400">Descubra quem é o espião</p>
+
+          {/* Status de conexão */}
+          <div className="mt-4">
+            <div
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs ${
+                conectado
+                  ? "bg-green-900/30 text-green-400"
+                  : "bg-red-900/30 text-red-400"
+              }`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full mr-2 ${
+                  conectado ? "bg-green-400" : "bg-red-400"
+                }`}
+              ></div>
+              {conectado ? "Conectado" : "Conectando..."}
+            </div>
+          </div>
         </div>
+
+        {/* Mostrar erros */}
+        {erro && (
+          <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg">
+            <p className="text-red-300 text-sm">{erro}</p>
+          </div>
+        )}
 
         {/* Input Nome */}
         <div className="mb-6">
@@ -61,7 +117,7 @@ export default function Home() {
             value={nomeJogador}
             onChange={(e) => setNomeJogador(e.target.value)}
             placeholder="Digite seu nome"
-            className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all"
             maxLength={20}
           />
         </div>
@@ -78,7 +134,7 @@ export default function Home() {
 
             <button
               onClick={() => setModo("entrar")}
-              className="w-full py-4 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-gray-700 border border-zinc-700 transition-all"
+              className="w-full py-4 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 border border-gray-700 transition-all"
             >
               Entrar em Sala
             </button>
@@ -94,10 +150,10 @@ export default function Home() {
 
             <button
               onClick={criarSala}
-              disabled={!nomeJogador.trim()}
+              disabled={!nomeJogador.trim() || !conectado || carregando}
               className="w-full py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Criar Sala
+              {carregando ? "Criando..." : "Criar Sala"}
             </button>
 
             <button
@@ -121,17 +177,22 @@ export default function Home() {
                 value={codigoSala}
                 onChange={(e) => setCodigoSala(e.target.value.toUpperCase())}
                 placeholder="Ex: ABC123"
-                className="w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all uppercase"
+                className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all uppercase"
                 maxLength={6}
               />
             </div>
 
             <button
-              onClick={entrarSala}
-              disabled={!nomeJogador.trim() || !codigoSala.trim()}
+              onClick={entrarNaSala}
+              disabled={
+                !nomeJogador.trim() ||
+                !codigoSala.trim() ||
+                !conectado ||
+                carregando
+              }
               className="w-full py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Entrar na Sala
+              {carregando ? "Entrando..." : "Entrar na Sala"}
             </button>
 
             <button

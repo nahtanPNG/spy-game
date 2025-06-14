@@ -10,7 +10,7 @@ import {
 import { GameLogic } from "./game-logic";
 
 export type NextApiResponseServerIO = NextApiResponse & {
-  socket: {
+  socket: any & {
     server: NetServer & {
       io: ServerIO<
         ClientToServerEvents,
@@ -70,12 +70,19 @@ export default function SocketHandler(
       const sala = GameLogic.entrarSala(codigo, nome, socket.id, isHost);
 
       if (!sala) {
+        console.log(`Falha ao entrar na sala ${codigo} para ${nome}`);
         socket.emit(
           "erro",
           "Não foi possível entrar na sala. Verifique o código ou tente outro nome."
         );
         return;
       }
+
+      console.log(`Sala ${codigo} atual:`, {
+        codigo: sala.codigo,
+        jogadores: sala.jogadores.length,
+        status: sala.status,
+      });
 
       // Adiciona o socket à room da sala
       socket.join(codigo);
@@ -153,15 +160,7 @@ export default function SocketHandler(
     });
 
     // Função auxiliar para lidar com saída da sala
-    function handleLeaveRoom(
-      socket: import("socket.io").Socket<
-        ClientToServerEvents,
-        ServerToClientEvents,
-        InterServerEvents,
-        SocketData
-      >,
-      codigo: string
-    ) {
+    function handleLeaveRoom(socket: any, codigo: string) {
       const { sala, jogadorRemovido } = GameLogic.sairSala(codigo, socket.id);
 
       socket.leave(codigo);
