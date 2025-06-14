@@ -109,16 +109,25 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       );
       if (jogador) {
         setJogadorAtual(jogador);
+        console.log("👤 Jogador atual com nova carta:", jogador);
       }
     });
 
     socketIO.on("jogo-reiniciado", (salaAtualizada) => {
-      console.log("🔄 Jogo reiniciado!");
+      console.log("🔄 Jogo reiniciado! Nova sala:", salaAtualizada);
       setSala(salaAtualizada);
+
+      // Encontra o jogador atual com a NOVA carta
       const jogador = salaAtualizada.jogadores.find(
         (j) => j.socketId === socketIO.id
       );
+
       if (jogador) {
+        console.log("👤 Jogador atual com carta reiniciada:", {
+          nome: jogador.nome,
+          carta: jogador.carta,
+          cartaRevelada: jogador.cartaRevelada,
+        });
         setJogadorAtual(jogador);
       }
     });
@@ -176,9 +185,12 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const reiniciarJogo = useCallback(
     (codigo: string) => {
       if (socket && conectado) {
-        console.log(`🎯 Reiniciando jogo na sala: ${codigo}`);
+        console.log(`🔄 Reiniciando jogo na sala: ${codigo}`);
         setErro("");
         socket.emit("reiniciar-jogo", codigo);
+      } else {
+        console.log("❌ Não foi possível reiniciar - socket não conectado");
+        setErro("Não conectado ao servidor");
       }
     },
     [socket, conectado]

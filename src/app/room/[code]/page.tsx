@@ -58,6 +58,7 @@ export default function SalaPage() {
             codigo: sala.codigo,
             status: sala.status,
             jogadores: sala.jogadores.length,
+            local: sala.local,
           }
         : null,
       jogadorAtual: jogadorAtual
@@ -67,12 +68,22 @@ export default function SalaPage() {
     });
   }, [conectado, sala, jogadorAtual, erro]);
 
-  // Reset da carta quando o jogo reinicia
   useEffect(() => {
     if (sala?.status === "aguardando") {
+      console.log("Resetando carta - sala aguardando");
       setMostrarCarta(false);
     }
-  }, [sala?.status]);
+
+    if (jogadorAtual && !jogadorAtual.cartaRevelada) {
+      console.log("Resetando carta - jogador não revelou ainda");
+      setMostrarCarta(false);
+    }
+  }, [
+    sala?.status,
+    jogadorAtual?.cartaRevelada,
+    jogadorAtual?.carta,
+    jogadorAtual,
+  ]);
 
   const handleIniciarJogo = () => {
     if (!sala || sala.jogadores.length < 3) {
@@ -81,9 +92,9 @@ export default function SalaPage() {
     }
 
     setCarregando(true);
+    console.log("Iniciando jogo...");
     iniciarJogo(codigoSala);
 
-    // Remove o carregando após um tempo (vai ser atualizado pelo WebSocket)
     setTimeout(() => setCarregando(false), 2000);
   };
 
@@ -94,16 +105,23 @@ export default function SalaPage() {
     }
 
     setCarregando(true);
-    reiniciarJogo(codigoSala);
-    setMostrarCarta(false);
+    console.log("Reiniciando jogo...");
 
-    // Remove o carregando após um tempo (vai ser atualizado pelo WebSocket)
+    setMostrarCarta(false);
+    reiniciarJogo(codigoSala);
+
     setTimeout(() => setCarregando(false), 2000);
   };
 
   const handleRevelarCarta = () => {
+    console.log("Revelando carta...");
     setMostrarCarta(true);
     revelarCarta(codigoSala);
+  };
+
+  const handleEsconderCarta = () => {
+    console.log("Escondendo carta...");
+    setMostrarCarta(false);
   };
 
   const handleVoltarHome = () => {
@@ -114,7 +132,6 @@ export default function SalaPage() {
   return (
     <div className="min-h-screen bg-black p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="bg-zinc-900 rounded-2xl p-6 mb-6 shadow-xl border border-zinc-800">
           <div className="flex justify-between items-center">
             <div>
@@ -130,7 +147,6 @@ export default function SalaPage() {
                   : "Finalizada"}
               </p>
 
-              {/* Status de conexão */}
               <div className="mt-2">
                 <div
                   className={`inline-flex items-center px-2 py-1 rounded text-xs ${
@@ -157,7 +173,6 @@ export default function SalaPage() {
           </div>
         </div>
 
-        {/* Mostrar erros */}
         {erro && (
           <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg">
             <p className="text-red-300 text-sm">{erro}</p>
@@ -170,7 +185,6 @@ export default function SalaPage() {
           </div>
         )}
 
-        {/* Loading state */}
         {!sala && conectado && (
           <div className="text-center py-8">
             <p className="text-gray-400">Carregando sala...</p>
@@ -179,10 +193,9 @@ export default function SalaPage() {
 
         {sala && (
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Coluna Esquerda - Jogadores */}
-            <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
+            {/* Coluna de jogadores */}
+            <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800 flex flex-col justify-start h-full ">
               <h2 className="text-xl font-bold text-white mb-4">Jogadores</h2>
-
               <div className="space-y-3">
                 {sala.jogadores.map((jogador) => (
                   <div
@@ -199,17 +212,11 @@ export default function SalaPage() {
                         {jogador.isHost && " (host)"}
                         {jogador.id === jogadorAtual?.id && " (você)"}
                       </span>
-                      <span className="text-sm">
-                        {sala.status === "em-jogo" && jogador.cartaRevelada
-                          ? "Revelou"
-                          : "Aguardando"}
-                      </span>
                     </div>
                   </div>
                 ))}
               </div>
-
-              {/* Botão Iniciar Jogo e Reiniciar - só para host */}
+              {/* Botões de controle */}
               {sala.status === "aguardando" && jogadorAtual?.isHost && (
                 <div className="mt-6">
                   <button
@@ -248,12 +255,10 @@ export default function SalaPage() {
               )}
             </div>
 
-            {/* Coluna Direita - Jogo */}
-            <div className="space-y-6">
-              {/* Sua Carta */}
-              <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
+            {/* Coluna da carta */}
+            <div className="space-y-6 flex flex-col justify-start h-full">
+              <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800 flex-1">
                 <h2 className="text-xl font-bold text-white mb-4">Sua Carta</h2>
-
                 {sala.status === "aguardando" && (
                   <div className="text-center py-8">
                     <p className="text-gray-400">
@@ -261,7 +266,6 @@ export default function SalaPage() {
                     </p>
                   </div>
                 )}
-
                 {sala.status === "em-jogo" && !mostrarCarta && (
                   <div className="text-center py-8">
                     <div className="mb-4">
@@ -277,7 +281,6 @@ export default function SalaPage() {
                     </button>
                   </div>
                 )}
-
                 {sala.status === "em-jogo" && mostrarCarta && jogadorAtual && (
                   <div className="text-center py-4">
                     <div className="mb-4">
@@ -289,7 +292,7 @@ export default function SalaPage() {
                         }`}
                       >
                         <div className="text-center text-white">
-                          <div className="text-2xl mb-2 font-bold">
+                          <div className="text-xl mb-2 font-bold">
                             {jogadorAtual.carta === "espiao"
                               ? "ESPIÃO"
                               : jogadorAtual.carta}
@@ -297,7 +300,16 @@ export default function SalaPage() {
                         </div>
                       </div>
                     </div>
-
+                    {sala.status === "em-jogo" && mostrarCarta && (
+                      <div className="text-center py-3">
+                        <button
+                          onClick={handleEsconderCarta}
+                          className="px-8 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all"
+                        >
+                          Esconder Carta
+                        </button>
+                      </div>
+                    )}
                     {jogadorAtual.carta === "espiao" ? (
                       <div className="bg-red-900/30 border border-red-800 rounded-lg p-4">
                         <p className="text-red-300 font-medium">
@@ -318,42 +330,38 @@ export default function SalaPage() {
                   </div>
                 )}
               </div>
-
-              {/* Lista de Locais */}
-              {sala.status === "em-jogo" && (
-                <div className="bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-white">
-                      Locais Possíveis
-                    </h2>
-                    <button
-                      onClick={() => setMostrarLocais(!mostrarLocais)}
-                      className="px-4 py-2 bg-zinc-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-all"
-                    >
-                      {mostrarLocais ? "Ocultar" : "Mostrar"}
-                    </button>
-                  </div>
-
-                  {mostrarLocais && (
-                    <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                      {GAME_LOCATIONS.map((local, index) => (
-                        <div
-                          key={index}
-                          className={`p-3 rounded-lg text-sm transition-all ${
-                            local === sala.local &&
-                            jogadorAtual?.carta !== "espiao"
-                              ? "bg-green-900/50 text-green-300 border border-green-800"
-                              : "bg-zinc-800 text-gray-300 hover:bg-gray-700"
-                          }`}
-                        >
-                          {local}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
+          </div>
+        )}
+
+        {/* Locais Possíveis - sempre abaixo das colunas principais */}
+        {sala && sala.status === "em-jogo" && (
+          <div className="w-full mt-6 bg-zinc-900 rounded-2xl p-6 shadow-xl border border-zinc-800">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">Locais Possíveis</h2>
+              <button
+                onClick={() => setMostrarLocais(!mostrarLocais)}
+                className="px-4 py-2 bg-zinc-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-all"
+              >
+                {mostrarLocais ? "Ocultar" : "Mostrar"}
+              </button>
+            </div>
+            {mostrarLocais && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-fit overflow-y-auto">
+                {GAME_LOCATIONS.map((local, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg text-sm transition-all ${
+                      local === sala.local && jogadorAtual?.carta !== "espiao"
+                        ? "bg-green-900/50 text-green-300 border border-green-800"
+                        : "bg-zinc-800 text-gray-300 hover:bg-gray-700"
+                    }`}
+                  >
+                    {local}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -161,23 +161,28 @@ export class GameLogic {
 
   static reiniciarJogo(codigo: string, hostSocketId: string): Sala | null {
     const sala = salas.get(codigo);
-    if (!sala) return null;
+    if (!sala) {
+      console.log(`Sala ${codigo} não encontrada`);
+      return null;
+    }
 
+    // Verifica se quem está reiniciando é o host
     const host = sala.jogadores.find(
       (j) => j.socketId === hostSocketId && j.isHost
     );
-    if (!host) return null;
+    if (!host) {
+      console.log(`Socket ${hostSocketId} não é host da sala ${codigo}`);
+      return null;
+    }
 
-    sala.status = "aguardando";
-    sala.jogadores = sala.jogadores.map((jogador) => ({
-      ...jogador,
-      carta: "",
-      cartaRevelada: false,
-    }));
+    if (sala.jogadores.length < 3) {
+      console.log(`Sala ${codigo} não tem jogadores suficientes`);
+      return null;
+    }
 
-    sala.local = "";
-    sala.espiao = "";
+    console.log(`Reiniciando jogo na sala ${codigo}...`);
 
+    // NOVO JOGO: Escolhe um local aleatório
     const localEscolhido =
       GAME_LOCATIONS[Math.floor(Math.random() * GAME_LOCATIONS.length)];
 
@@ -185,19 +190,24 @@ export class GameLogic {
     const espiaoIndex = Math.floor(Math.random() * sala.jogadores.length);
     const espiaoEscolhido = sala.jogadores[espiaoIndex];
 
-    // Distribui as cartas
+    // Distribui as novas cartas
     sala.jogadores = sala.jogadores.map((jogador, index) => ({
       ...jogador,
       carta: index === espiaoIndex ? "espiao" : localEscolhido,
       cartaRevelada: false,
     }));
 
-    // Atualiza o estado da sala
+    // Atualiza o estado da sala para o novo jogo
     sala.local = localEscolhido;
     sala.espiao = espiaoEscolhido.id;
     sala.status = "em-jogo";
 
     salas.set(codigo, sala);
+
+    console.log(
+      `Jogo reiniciado na sala ${codigo}. Novo local: ${sala.local}, Novo espião: ${sala.espiao}`
+    );
+
     return sala;
   }
 

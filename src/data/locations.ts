@@ -30,4 +30,5 @@ export const GAME_LOCATIONS = [
   "Spa",
   "Museu",
   "Delegacia",
+  "ETEC",
 ];
