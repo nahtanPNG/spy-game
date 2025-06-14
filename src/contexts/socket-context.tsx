@@ -43,17 +43,29 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const [erro, setErro] = useState<string>("");
 
   const socketRef = useRef<SocketType | null>(null);
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Previne múltiplas conexões
     if (socketRef.current) return;
 
-    console.log("Inicializando conexão Socket.IO...");
+    console.log("🔌 Inicializando conexão Socket.IO...");
+
+    // URL do backend - ajuste conforme necessário
+    const backendUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
+    console.log("🌐 Conectando ao servidor:", backendUrl);
 
     // Inicializa conexão Socket.IO
-    const socketIO: SocketType = io({
-      path: "/api/socket",
-      addTrailingSlash: false,
+    const socketIO: SocketType = io(backendUrl, {
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      forceNew: true,
     });
 
     socketRef.current = socketIO;
@@ -74,6 +86,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     socketIO.on("connect_error", (error) => {
       console.error("❌ Erro de conexão:", error);
       setErro("Erro de conexão com o servidor");
+      setConectado(false);
     });
 
     // Eventos do jogo
@@ -149,6 +162,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     // Cleanup na desmontagem do provider
     return () => {
       console.log("🧹 Limpando conexão Socket.IO...");
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+      }
       socketIO.disconnect();
       socketRef.current = null;
     };
