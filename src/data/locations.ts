@@ -31,4 +31,8 @@ export const GAME_LOCATIONS = [
   "Museu",
   "Delegacia",
   "ETEC",
+  "Divino Buchoes",
+  "Shopping Mais",
+  "Hogwarts",
+  "Casa da ayla",
 ];
